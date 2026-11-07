@@ -1,21 +1,9 @@
 import { useState, useCallback } from 'react';
 import defaultCards from '../data/spectrumCards';
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-// Format card with 50% chance to flip left and right
+// Keep card format as is without flipping
 function formatCard(card) {
   if (!card) return null;
-  if (Math.random() < 0.5) {
-    return { left: card.right, right: card.left };
-  }
   return { left: card.left, right: card.right };
 }
 
@@ -135,7 +123,7 @@ export default function useGameState() {
   // startGame accepts all config directly
   const startGame = useCallback((config) => {
     setState(s => {
-      const allCards = shuffle([...defaultCards, ...s.customCards]);
+      const allCards = [...defaultCards, ...s.customCards];
       const { target, targetBag, recentSides } = getNextTarget([], []);
       const firstCard = formatCard(allCards[0]);
 
@@ -164,9 +152,11 @@ export default function useGameState() {
     });
   }, []);
 
-  const submitClue = useCallback((clue) => {
-    setState(s => ({ ...s, clue, phase: 'guessing', guess: 50 }));
+  const startGuessing = useCallback(() => {
+    setState(s => ({ ...s, phase: 'guessing', guess: 50 }));
   }, []);
+
+  const submitClue = startGuessing;
 
   const setGuess = useCallback((val) => {
     setState(s => ({ ...s, guess: Math.max(0, Math.min(100, val)) }));
@@ -259,6 +249,7 @@ export default function useGameState() {
       addCustomCard,
       removeCustomCard,
       startGame,
+      startGuessing,
       submitClue,
       setGuess,
       lockGuess,

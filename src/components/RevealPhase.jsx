@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import WavelengthDial from './WavelengthDial';
+import { playBullseye, playClose, playNear, playMiss } from '../utils/soundEffects';
+import { launchConfetti } from '../utils/confetti';
 
 export default function RevealPhase({ state, actions }) {
   const [revealed, setRevealed] = useState(false);
   const activeTeam = state.teams[state.activeTeam];
-
-  useEffect(() => {
-    const timer = setTimeout(() => setRevealed(true), 400);
-    return () => clearTimeout(timer);
-  }, []);
 
   const diff = Math.abs(state.guess - state.target);
   let scoreLabel, scoreEmoji, scoreClass;
@@ -29,6 +26,23 @@ export default function RevealPhase({ state, actions }) {
     scoreEmoji = '😬';
     scoreClass = 'miss';
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setRevealed(true);
+      if (diff <= 3) {
+        playBullseye();
+        launchConfetti();
+      } else if (diff <= 8) {
+        playClose();
+      } else if (diff <= 15) {
+        playNear();
+      } else {
+        playMiss();
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [diff]);
 
   return (
     <div className="phase-container reveal-phase">
@@ -69,10 +83,6 @@ export default function RevealPhase({ state, actions }) {
             <span className="stat-label">Difference</span>
             <span className="stat-val">{diff}%</span>
           </div>
-        </div>
-
-        <div className="clue-recall">
-          Clue: <strong>"{state.clue}"</strong>
         </div>
       </div>
 

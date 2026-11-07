@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import WavelengthDial from './WavelengthDial';
+import { playReveal, playLock } from '../utils/soundEffects';
 
 export default function PsychicPhase({ state, actions }) {
-  const [clue, setClue] = useState('');
   const [showTarget, setShowTarget] = useState(false);
 
   const team = state.teams[state.activeTeam];
@@ -10,11 +10,14 @@ export default function PsychicPhase({ state, actions }) {
     ? team.players[state.psychicIndex[state.activeTeam]]
     : 'The Psychic';
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (clue.trim()) {
-      actions.submitClue(clue.trim());
-    }
+  const handleOpenScreen = () => {
+    playReveal();
+    setShowTarget(true);
+  };
+
+  const handleClueGiven = () => {
+    playLock();
+    actions.startGuessing();
   };
 
   return (
@@ -47,17 +50,14 @@ export default function PsychicPhase({ state, actions }) {
               </div>
             </div>
             <p className="instruction">
-              Only the Psychic should look! Click to open the screen and see the secret target.
+              Only the Psychic should look! Click below to open the screen and view the secret target.
             </p>
-            <button className="reveal-target-btn" onClick={() => setShowTarget(true)}>
+            <button className="reveal-target-btn" onClick={handleOpenScreen}>
               👁️ Open Screen (Psychic Only!)
             </button>
           </div>
         ) : (
           <div className="target-preview-dial">
-            <p className="instruction">
-              🎯 The target location is revealed on the dial! Think of a clue to guide your team:
-            </p>
 
             <WavelengthDial
               target={state.target}
@@ -68,22 +68,15 @@ export default function PsychicPhase({ state, actions }) {
               rightLabel={state.currentCard.right}
             />
 
-            <form onSubmit={handleSubmit} className="clue-form">
-              <div className="clue-input-wrapper">
-                <input
-                  type="text"
-                  value={clue}
-                  onChange={e => setClue(e.target.value)}
-                  placeholder="Enter your clue..."
-                  className="clue-input"
-                  autoFocus
-                  maxLength={60}
-                />
-                <button type="submit" className="submit-clue-btn" disabled={!clue.trim()}>
-                  Give Clue →
-                </button>
-              </div>
-            </form>
+            <div className="clue-action-box">
+              <button
+                type="button"
+                className="start-guessing-btn"
+                onClick={handleClueGiven}
+              >
+                🗣️ Let Your Team Guess! →
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -1,7 +1,16 @@
+import { useEffect } from 'react';
+import { playCheer } from '../utils/soundEffects';
+import { launchConfetti } from '../utils/confetti';
+
 export default function GameOver({ state, actions }) {
   const teamA = state.teams.A;
   const teamB = state.teams.B;
   const winner = teamA.score > teamB.score ? 'A' : teamB.score > teamA.score ? 'B' : 'TIE';
+
+  useEffect(() => {
+    playCheer();
+    launchConfetti();
+  }, []);
 
   return (
     <div className="phase-container gameover-phase">
@@ -44,7 +53,6 @@ export default function GameOver({ state, actions }) {
                   <th>Round</th>
                   <th>Team</th>
                   <th>Spectrum</th>
-                  <th>Clue</th>
                   <th>Target</th>
                   <th>Guess</th>
                   <th>Score</th>
@@ -56,7 +64,6 @@ export default function GameOver({ state, actions }) {
                     <td>{h.round}</td>
                     <td>{h.team}</td>
                     <td className="spectrum-cell">{h.card.left} ↔ {h.card.right}</td>
-                    <td className="clue-cell">"{h.clue}"</td>
                     <td>{h.target}%</td>
                     <td>{h.guess}%</td>
                     <td className="score-cell">+{h.score}</td>
@@ -76,4 +83,3 @@ export default function GameOver({ state, actions }) {
     </div>
   );
 }
-

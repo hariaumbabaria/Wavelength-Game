@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import defaultCards from '../data/spectrumCards';
 
 export default function SetupScreen({ state, actions }) {
   const [teamAName, setTeamAName] = useState('Team 1');
   const [teamBName, setTeamBName] = useState('Team 2');
   const [teamAPlayers, setTeamAPlayers] = useState('');
   const [teamBPlayers, setTeamBPlayers] = useState('');
-  const [rounds, setRounds] = useState(5);
+  const [rounds, setRounds] = useState(11);
   const [customLeft, setCustomLeft] = useState('');
   const [customRight, setCustomRight] = useState('');
   const [showRules, setShowRules] = useState(false);
@@ -54,14 +55,13 @@ export default function SetupScreen({ state, actions }) {
             <div className="rule-step">
               <span className="step-num">1</span>
               <div>
-                <strong>The Psychic</strong> sees a hidden target on the spectrum and gives a one-word or short clue
-                to help their team guess where it is.
+                <strong>The Psychic</strong> sees the secret target on the dial and gives a clue <strong>out loud</strong> to everyone in the room.
               </div>
             </div>
             <div className="rule-step">
               <span className="step-num">2</span>
               <div>
-                <strong>The Team</strong> discusses and moves the dial to where they think the target is based on the clue.
+                <strong>The Team</strong> discusses and moves the dial to where they think the target is based on the spoken clue.
               </div>
             </div>
             <div className="rule-step">
@@ -159,7 +159,9 @@ export default function SetupScreen({ state, actions }) {
               ))}
             </div>
           )}
-          <p className="hint">Added: {state.customCards.length} custom + 50 default cards</p>
+          <p className="hint">
+            Deck: {defaultCards.length} built-in{state.customCards.length > 0 ? ` + ${state.customCards.length} custom` : ''} cards (played in exact order)
+          </p>
         </div>
       </div>
 

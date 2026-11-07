@@ -1,4 +1,5 @@
 import { useRef, useCallback, useEffect, useState } from 'react';
+import { playTick } from '../utils/soundEffects';
 
 // Helper to describe an SVG donut/arc wedge
 function describeArcWedge(cx, cy, rInner, rOuter, startAngle, endAngle) {
@@ -68,15 +69,21 @@ export default function WavelengthDial({
     if (!interactive) return;
     setIsDragging(true);
     const pos = getPositionFromEvent(e);
-    if (onGuessChange) onGuessChange(pos);
-  }, [interactive, getPositionFromEvent, onGuessChange]);
+    if (onGuessChange && pos !== guess) {
+      playTick();
+      onGuessChange(pos);
+    }
+  }, [interactive, getPositionFromEvent, onGuessChange, guess]);
 
   const handlePointerMove = useCallback((e) => {
     if (!isDragging || !interactive) return;
     if (e.cancelable) e.preventDefault();
     const pos = getPositionFromEvent(e);
-    if (onGuessChange) onGuessChange(pos);
-  }, [isDragging, interactive, getPositionFromEvent, onGuessChange]);
+    if (onGuessChange && pos !== guess) {
+      playTick();
+      onGuessChange(pos);
+    }
+  }, [isDragging, interactive, getPositionFromEvent, onGuessChange, guess]);
 
   const handlePointerUp = useCallback(() => {
     setIsDragging(false);

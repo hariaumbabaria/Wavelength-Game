@@ -1,7 +1,18 @@
 import WavelengthDial from './WavelengthDial';
+import { playTick, playLock } from '../utils/soundEffects';
 
 export default function GuessingPhase({ state, actions }) {
   const team = state.teams[state.activeTeam];
+
+  const handleNudge = (delta) => {
+    playTick();
+    actions.setGuess(state.guess + delta);
+  };
+
+  const handleLock = () => {
+    playLock();
+    actions.lockGuess();
+  };
 
   return (
     <div className="phase-container guessing-phase">
@@ -12,9 +23,12 @@ export default function GuessingPhase({ state, actions }) {
         </div>
       </div>
 
-      <div className="clue-display">
-        <span className="clue-label">The clue is:</span>
-        <span className="clue-word">"{state.clue}"</span>
+      <div className="spoken-clue-banner">
+        <div className="speaker-icon">🗣️</div>
+        <div className="spoken-clue-text">
+          <h3>Listen to the Psychic's Spoken Clue!</h3>
+          <p>Discuss with your team and drag the needle to where you think the target is.</p>
+        </div>
       </div>
 
       <div className="dial-section">
@@ -33,7 +47,7 @@ export default function GuessingPhase({ state, actions }) {
           <button
             type="button"
             className="nudge-btn"
-            onClick={() => actions.setGuess(state.guess - 5)}
+            onClick={() => handleNudge(-5)}
             title="Move 5% left"
           >
             « -5%
@@ -41,7 +55,7 @@ export default function GuessingPhase({ state, actions }) {
           <button
             type="button"
             className="nudge-btn"
-            onClick={() => actions.setGuess(state.guess - 1)}
+            onClick={() => handleNudge(-1)}
             title="Move 1% left"
           >
             ‹ -1%
@@ -50,7 +64,7 @@ export default function GuessingPhase({ state, actions }) {
           <button
             type="button"
             className="nudge-btn"
-            onClick={() => actions.setGuess(state.guess + 1)}
+            onClick={() => handleNudge(1)}
             title="Move 1% right"
           >
             +1% ›
@@ -58,7 +72,7 @@ export default function GuessingPhase({ state, actions }) {
           <button
             type="button"
             className="nudge-btn"
-            onClick={() => actions.setGuess(state.guess + 5)}
+            onClick={() => handleNudge(5)}
             title="Move 5% right"
           >
             +5% »
@@ -67,10 +81,10 @@ export default function GuessingPhase({ state, actions }) {
       </div>
 
       <p className="instruction">
-        🖱️ Click or drag the dial to aim the needle, or use buttons above!
+        🖱️ Click or drag the dial to aim the needle, or use the fine-tune buttons above!
       </p>
 
-      <button className="lock-btn" onClick={actions.lockGuess}>
+      <button className="lock-btn" onClick={handleLock}>
         🔒 Lock In Guess
       </button>
     </div>

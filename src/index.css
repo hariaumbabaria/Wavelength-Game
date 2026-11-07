@@ -140,6 +140,28 @@ body {
   font-size: 20px;
 }
 
+.sound-toggle-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  margin-left: 8px;
+}
+
+.sound-toggle-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08);
+}
+
 /* ============================================================
    GAME MAIN
    ============================================================ */
@@ -757,78 +779,97 @@ body {
   animation: fadeSlideIn 0.5s ease;
 }
 
-.clue-form {
-  margin-top: 20px;
-}
-
-.clue-input-wrapper {
-  display: flex;
-  gap: 8px;
+.psychic-steps-banner {
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  margin: 0 auto 16px;
   max-width: 520px;
-  margin: 0 auto;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  text-align: left;
 }
 
-.clue-input {
-  flex: 1;
-  padding: 14px 18px !important;
-  font-size: 18px !important;
-  border-radius: var(--radius-md) !important;
+.step-tag {
+  display: inline-block;
+  background: var(--accent-purple);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-right: 8px;
+}
+
+.clue-action-box {
+  margin-top: 20px;
   text-align: center;
 }
 
-.submit-clue-btn {
-  padding: 14px 24px;
-  background: var(--accent-green);
+.clue-spoken-hint {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.start-guessing-btn {
+  display: inline-block;
+  width: 100%;
+  max-width: 440px;
+  padding: 16px 28px;
+  background: linear-gradient(135deg, var(--accent-green), #059669);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   color: white;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
+  transition: all 0.3s;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.5px;
 }
 
-.submit-clue-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.submit-clue-btn:not(:disabled):hover {
-  background: #059669;
-  transform: translateY(-1px);
+.start-guessing-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
 }
 
 /* ============================================================
    GUESSING PHASE
    ============================================================ */
 
-.clue-display {
-  text-align: center;
-  margin-bottom: 20px;
-  padding: 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+.spoken-clue-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
   border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 20px;
 }
 
-.clue-label {
-  font-size: 13px;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+.speaker-icon {
+  font-size: 38px;
+  flex-shrink: 0;
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
-.clue-word {
+.spoken-clue-text h3 {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #fbbf24, #f97316);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 18px;
+  color: var(--accent-yellow);
+  margin-bottom: 4px;
+}
+
+.spoken-clue-text p {
+  font-size: 14px;
+  color: var(--text-secondary);
 }
 
 .lock-btn {
