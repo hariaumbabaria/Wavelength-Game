@@ -592,12 +592,113 @@ body {
 }
 
 /* ============================================================
+   WAVELENGTH DIAL COMPONENT
+   ============================================================ */
+
+.wavelength-dial-wrapper {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto 16px;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.wavelength-dial-wrapper.interactive {
+  cursor: pointer;
+}
+
+.wavelength-dial-svg {
+  width: 100%;
+  display: block;
+  filter: drop-shadow(0 8px 30px rgba(0, 0, 0, 0.5));
+}
+
+.dial-spectrum-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -6px;
+  padding: 0 8px;
+}
+
+.dial-label {
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dial-label-left {
+  color: #ff6b81;
+  text-align: left;
+}
+
+.dial-label-right {
+  color: #5b8aff;
+  text-align: right;
+}
+
+.dial-arrow {
+  opacity: 0.7;
+  font-size: 16px;
+}
+
+.dial-guess-badge {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 14px;
+  border-radius: var(--radius-xl);
+}
+
+/* Quick dial controls / fine tune buttons */
+.dial-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 16px;
+}
+
+.nudge-btn {
+  padding: 6px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nudge-btn:hover {
+  background: var(--accent-purple);
+  border-color: var(--accent-purple);
+  color: white;
+}
+
+.current-guess-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ============================================================
    PSYCHIC PHASE
    ============================================================ */
 
 .psychic-info {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .psychic-avatar {
@@ -626,13 +727,20 @@ body {
   text-align: center;
 }
 
+.shutter-closed-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 32px 20px;
+}
+
 .reveal-target-btn {
-  padding: 14px 32px;
+  padding: 16px 36px;
   background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
   border: none;
   border-radius: var(--radius-lg);
   color: white;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   cursor: pointer;
   margin-top: 12px;
@@ -645,73 +753,8 @@ body {
   box-shadow: 0 8px 30px rgba(139, 92, 246, 0.5);
 }
 
-.target-preview {
+.target-preview-dial {
   animation: fadeSlideIn 0.5s ease;
-}
-
-.mini-spectrum {
-  position: relative;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-md);
-  margin: 16px 0 8px;
-  overflow: hidden;
-}
-
-.mini-gradient {
-  width: 100%;
-  height: 100%;
-  background: var(--gradient-spectrum);
-  opacity: 0.2;
-}
-
-.mini-target-marker {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.target-zone {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 4px;
-}
-
-.zone-4 {
-  background: rgba(16, 185, 129, 0.6);
-  z-index: 3;
-}
-
-.zone-3 {
-  background: rgba(251, 191, 36, 0.4);
-  z-index: 2;
-}
-
-.zone-2 {
-  background: rgba(249, 115, 22, 0.25);
-  z-index: 1;
-}
-
-.target-pin {
-  position: relative;
-  z-index: 5;
-  font-size: 28px;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
-}
-
-.target-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-bottom: 20px;
 }
 
 .clue-form {
@@ -721,6 +764,8 @@ body {
 .clue-input-wrapper {
   display: flex;
   gap: 8px;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
 .clue-input {
@@ -786,29 +831,6 @@ body {
   background-clip: text;
 }
 
-.dial-container {
-  position: relative;
-  max-width: 400px;
-  margin: 0 auto 12px;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.dial-svg {
-  width: 100%;
-  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3));
-}
-
-.guess-value {
-  text-align: center;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  margin-top: -10px;
-}
-
 .lock-btn {
   display: block;
   width: 100%;
@@ -832,109 +854,17 @@ body {
 }
 
 /* ============================================================
-   LEFT/RIGHT PHASE
-   ============================================================ */
-
-.lr-context { margin-bottom: 24px; }
-
-.guess-marker-bar {
-  position: relative;
-  margin-top: 8px;
-}
-
-.guess-bar-bg {
-  position: relative;
-  height: 40px;
-  background: rgba(255,255,255,0.05);
-  border-radius: var(--radius-sm);
-}
-
-.guess-arrow {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  text-align: center;
-}
-
-.arrow-label {
-  font-size: 11px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  display: block;
-  margin-bottom: 2px;
-}
-
-.arrow-pointer {
-  font-size: 20px;
-  color: white;
-}
-
-.lr-question {
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.lr-question h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
-  margin-bottom: 8px;
-}
-
-.lr-question p {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.lr-buttons {
-  display: flex;
-  gap: 16px;
-}
-
-.lr-btn {
-  flex: 1;
-  padding: 24px 16px;
-  border: 2px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  color: white;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.lr-arrow {
-  font-size: 28px;
-}
-
-.left-btn:hover {
-  border-color: var(--accent-red);
-  background: rgba(255, 71, 87, 0.1);
-  box-shadow: 0 0 30px rgba(255, 71, 87, 0.2);
-}
-
-.right-btn:hover {
-  border-color: #5b8aff;
-  background: rgba(55, 66, 250, 0.1);
-  box-shadow: 0 0 30px rgba(55, 66, 250, 0.2);
-}
-
-/* ============================================================
    REVEAL PHASE
    ============================================================ */
 
 .reveal-result {
   text-align: center;
-  padding: 32px 20px;
-  margin-bottom: 24px;
+  padding: 24px 20px;
+  margin-bottom: 20px;
   border-radius: var(--radius-lg);
   opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(0.85);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .reveal-result.revealed {
@@ -963,14 +893,14 @@ body {
 }
 
 .result-emoji {
-  font-size: 56px;
-  margin-bottom: 8px;
+  font-size: 52px;
+  margin-bottom: 6px;
 }
 
 .result-label {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 32px;
-  margin-bottom: 8px;
+  font-size: 30px;
+  margin-bottom: 6px;
 }
 
 .result-points {
@@ -978,151 +908,58 @@ body {
   color: var(--text-secondary);
 }
 
-.reveal-spectrum {
-  margin-bottom: 20px;
+.reveal-stats {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 14px 0;
 }
 
-.reveal-bar {
-  height: 50px !important;
-  border-radius: var(--radius-md) !important;
-  position: relative;
-}
-
-.reveal-bar .spectrum-gradient {
-  opacity: 0.3;
+.stat-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
 }
 
-.target-zone-overlay {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  transform: translateX(-50%);
-  z-index: 1;
+.stat-pill.target-pill {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.08);
 }
 
-.target-zone-overlay .zone {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 4px;
-}
-
-.target-zone-overlay .z4 {
-  width: 6%;
-  min-width: 16px;
-  background: rgba(16, 185, 129, 0.6);
-  z-index: 3;
-}
-
-.target-zone-overlay .z3 {
-  width: 16%;
-  min-width: 40px;
-  background: rgba(251, 191, 36, 0.35);
-  z-index: 2;
-}
-
-.target-zone-overlay .z2 {
-  width: 30%;
-  min-width: 70px;
-  background: rgba(249, 115, 22, 0.2);
-  z-index: 1;
-}
-
-.reveal-guess-marker, .reveal-target-marker {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  transform: translateX(-50%);
-  z-index: 10;
-}
-
-.marker-line {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  transform: translateX(-50%);
-  background: white;
-  border-radius: 2px;
-}
-
-.target-line {
-  background: var(--accent-green) !important;
-  width: 4px !important;
-  box-shadow: 0 0 10px var(--accent-green);
-}
-
-.marker-label {
-  position: absolute;
-  bottom: -24px;
-  left: 50%;
-  transform: translateX(-50%);
+.stat-label {
   font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-  padding: 2px 8px;
-  border-radius: 4px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.guess-label {
-  background: rgba(255, 255, 255, 0.15);
+.stat-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
   color: white;
 }
 
-.target-label {
-  background: rgba(16, 185, 129, 0.3);
+.stat-pill.target-pill .stat-val {
   color: var(--accent-green);
-}
-
-.reveal-target-marker {
-  opacity: 0;
-  transition: opacity 0.5s ease 0.3s;
-}
-
-.reveal-target-marker.show {
-  opacity: 1;
 }
 
 .clue-recall {
   text-align: center;
   color: var(--text-secondary);
-  font-size: 14px;
-  margin-top: 32px;
-}
-
-.opponent-result {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.opponent-verdict {
-  display: inline-block;
-  padding: 10px 24px;
-  border-radius: var(--radius-xl);
-  font-size: 14px;
-}
-
-.opponent-verdict.correct {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: var(--accent-green);
-}
-
-.opponent-verdict.wrong {
-  background: rgba(255, 71, 87, 0.15);
-  border: 1px solid rgba(255, 71, 87, 0.3);
-  color: var(--accent-red);
+  font-size: 15px;
+  margin-top: 10px;
 }
 
 .scoreboard-mini {
   display: flex;
   justify-content: center;
   gap: 32px;
-  margin-bottom: 24px;
+  margin: 20px 0 24px;
 }
 
 .score-item {
@@ -1345,5 +1182,5 @@ body {
   .final-score-card { padding: 16px 20px; min-width: 110px; }
   .final-team-score { font-size: 36px; }
   .clue-input-wrapper { flex-direction: column; }
-  .lr-buttons { flex-direction: column; }
+  .dial-spectrum-labels { font-size: 13px; }
 }

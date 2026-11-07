@@ -10,8 +10,86 @@ function shuffle(arr) {
   return a;
 }
 
-function randomTarget() {
-  return Math.floor(Math.random() * 81) + 10; // 10-90
+// Format card with 50% chance to flip left and right
+function formatCard(card) {
+  if (!card) return null;
+  if (Math.random() < 0.5) {
+    return { left: card.right, right: card.left };
+  }
+  return { left: card.left, right: card.right };
+}
+
+// Balanced target generator: creates a bag of 6 segments (3 left, 3 right)
+// guarantees no more than 2 consecutive targets on the same side
+function createTargetBag(lastSide1 = null, lastSide2 = null) {
+  const segments = [
+    { name: 'far-left', min: 14, max: 24, side: 'left' },
+    { name: 'mid-left', min: 26, max: 37, side: 'left' },
+    { name: 'center-left', min: 39, max: 47, side: 'left' },
+    { name: 'center-right', min: 53, max: 61, side: 'right' },
+    { name: 'mid-right', min: 63, max: 74, side: 'right' },
+    { name: 'far-right', min: 76, max: 86, side: 'right' },
+  ];
+
+  for (let attempt = 0; attempt < 500; attempt++) {
+    const shuffled = [...segments].sort(() => Math.random() - 0.5);
+    const fullSequence = [];
+    if (lastSide2) fullSequence.push(lastSide2);
+    if (lastSide1) fullSequence.push(lastSide1);
+    shuffled.forEach(s => fullSequence.push(s.side));
+
+    let valid = true;
+    for (let i = 0; i < fullSequence.length - 2; i++) {
+      if (fullSequence[i] === fullSequence[i + 1] && fullSequence[i] === fullSequence[i + 2]) {
+        valid = false;
+        break;
+      }
+    }
+    if (valid) {
+      return shuffled.map(s => Math.floor(Math.random() * (s.max - s.min + 1)) + s.min);
+    }
+  }
+
+  // Fallback: alternate left/right deterministically
+  const lefts = [
+    Math.floor(Math.random() * 11) + 14, // 14-24
+    Math.floor(Math.random() * 12) + 26, // 26-37
+    Math.floor(Math.random() * 9) + 39,  // 39-47
+  ].sort(() => Math.random() - 0.5);
+
+  const rights = [
+    Math.floor(Math.random() * 9) + 53,  // 53-61
+    Math.floor(Math.random() * 12) + 63, // 63-74
+    Math.floor(Math.random() * 11) + 76, // 76-86
+  ].sort(() => Math.random() - 0.5);
+
+  const startWithRight = lastSide1 === 'left';
+  const res = [];
+  for (let i = 0; i < 3; i++) {
+    if (startWithRight) {
+      res.push(rights[i], lefts[i]);
+    } else {
+      res.push(lefts[i], rights[i]);
+    }
+  }
+  return res;
+}
+
+function getNextTarget(targetBag = [], recentSides = []) {
+  let bag = [...targetBag];
+  const sides = [...recentSides];
+
+  if (bag.length === 0) {
+    const s1 = sides.length > 0 ? sides[sides.length - 1] : null;
+    const s2 = sides.length > 1 ? sides[sides.length - 2] : null;
+    bag = createTargetBag(s1, s2);
+  }
+
+  const target = bag.shift();
+  const side = target < 50 ? 'left' : 'right';
+  const updatedSides = [...sides.slice(-3), side];
+
+  return { target, targetBag: bag, recentSides: updatedSides };
 }
 
 /*
@@ -34,6 +112,8 @@ const INITIAL_STATE = {
   cardIndex: 0,
   currentCard: null,
   target: 50,
+  targetBag: [],
+  recentSides: [],
   guess: 50,
   clue: '',
   roundScore: 0,
@@ -52,18 +132,22 @@ export default function useGameState() {
     setState(s => ({ ...s, customCards: s.customCards.filter((_, i) => i !== index) }));
   }, []);
 
-  // startGame now accepts all config directly to avoid batching issues
+  // startGame accepts all config directly
   const startGame = useCallback((config) => {
     setState(s => {
       const allCards = shuffle([...defaultCards, ...s.customCards]);
-      const target = randomTarget();
+      const { target, targetBag, recentSides } = getNextTarget([], []);
+      const firstCard = formatCard(allCards[0]);
+
       return {
         ...s,
         phase: 'psychic',
         cards: allCards,
         cardIndex: 0,
-        currentCard: allCards[0],
+        currentCard: firstCard,
         target,
+        targetBag,
+        recentSides,
         currentRound: 1,
         activeTeam: 'A',
         guess: 50,
@@ -81,11 +165,11 @@ export default function useGameState() {
   }, []);
 
   const submitClue = useCallback((clue) => {
-    setState(s => ({ ...s, clue, phase: 'guessing' }));
+    setState(s => ({ ...s, clue, phase: 'guessing', guess: 50 }));
   }, []);
 
   const setGuess = useCallback((val) => {
-    setState(s => ({ ...s, guess: val }));
+    setState(s => ({ ...s, guess: Math.max(0, Math.min(100, val)) }));
   }, []);
 
   // Lock guess → calculate score → go straight to reveal
@@ -93,9 +177,9 @@ export default function useGameState() {
     setState(s => {
       const diff = Math.abs(s.guess - s.target);
       let score = 0;
-      if (diff <= 3) score = 4;       // bullseye
-      else if (diff <= 8) score = 3;  // close
-      else if (diff <= 15) score = 2; // near
+      if (diff <= 3) score = 4;       // bullseye: +-3%
+      else if (diff <= 8) score = 3;  // close: +-8%
+      else if (diff <= 15) score = 2; // near: +-15%
       else score = 0;
 
       const activeTeamKey = s.activeTeam;
@@ -139,8 +223,9 @@ export default function useGameState() {
       }
 
       const nextCardIndex = s.cardIndex + 1;
-      const nextCard = s.cards[nextCardIndex % s.cards.length];
-      const target = randomTarget();
+      const rawCard = s.cards[nextCardIndex % s.cards.length];
+      const nextCard = formatCard(rawCard);
+      const { target, targetBag, recentSides } = getNextTarget(s.targetBag, s.recentSides);
 
       return {
         ...s,
@@ -150,6 +235,8 @@ export default function useGameState() {
         cardIndex: nextCardIndex,
         currentCard: nextCard,
         target,
+        targetBag,
+        recentSides,
         guess: 50,
         clue: '',
         roundScore: 0,

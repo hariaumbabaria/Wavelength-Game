@@ -1,20 +1,34 @@
 import { useState, useEffect } from 'react';
+import WavelengthDial from './WavelengthDial';
 
 export default function RevealPhase({ state, actions }) {
   const [revealed, setRevealed] = useState(false);
   const activeTeam = state.teams[state.activeTeam];
 
   useEffect(() => {
-    const timer = setTimeout(() => setRevealed(true), 600);
+    const timer = setTimeout(() => setRevealed(true), 400);
     return () => clearTimeout(timer);
   }, []);
 
   const diff = Math.abs(state.guess - state.target);
   let scoreLabel, scoreEmoji, scoreClass;
-  if (diff <= 3) { scoreLabel = 'BULLSEYE!'; scoreEmoji = '🎯'; scoreClass = 'bullseye'; }
-  else if (diff <= 8) { scoreLabel = 'SO CLOSE!'; scoreEmoji = '🔥'; scoreClass = 'close'; }
-  else if (diff <= 15) { scoreLabel = 'NICE TRY!'; scoreEmoji = '👍'; scoreClass = 'near'; }
-  else { scoreLabel = 'MISSED!'; scoreEmoji = '😬'; scoreClass = 'miss'; }
+  if (diff <= 3) {
+    scoreLabel = 'BULLSEYE!';
+    scoreEmoji = '🎯';
+    scoreClass = 'bullseye';
+  } else if (diff <= 8) {
+    scoreLabel = 'SO CLOSE!';
+    scoreEmoji = '🔥';
+    scoreClass = 'close';
+  } else if (diff <= 15) {
+    scoreLabel = 'NICE TRY!';
+    scoreEmoji = '👍';
+    scoreClass = 'near';
+  } else {
+    scoreLabel = 'MISSED!';
+    scoreEmoji = '😬';
+    scoreClass = 'miss';
+  }
 
   return (
     <div className="phase-container reveal-phase">
@@ -31,32 +45,30 @@ export default function RevealPhase({ state, actions }) {
         <div className="result-points">+{state.roundScore} points for {activeTeam.name}</div>
       </div>
 
-      <div className="reveal-spectrum">
-        <div className="spectrum-card-display">
-          <div className="spectrum-label left">{state.currentCard.left}</div>
-          <div className="spectrum-bar reveal-bar">
-            <div className="spectrum-gradient"></div>
-            
-            {/* Target zone */}
-            <div className="target-zone-overlay" style={{ left: `${state.target}%` }}>
-              <div className="zone z4"></div>
-              <div className="zone z3"></div>
-              <div className="zone z2"></div>
-            </div>
+      <div className="dial-section reveal-dial-section">
+        <WavelengthDial
+          target={state.target}
+          guess={state.guess}
+          showTarget={revealed}
+          showNeedle={true}
+          interactive={false}
+          leftLabel={state.currentCard.left}
+          rightLabel={state.currentCard.right}
+        />
 
-            {/* Guess marker */}
-            <div className="reveal-guess-marker" style={{ left: `${state.guess}%` }}>
-              <div className="marker-line"></div>
-              <span className="marker-label guess-label">Guess</span>
-            </div>
-
-            {/* Target marker */}
-            <div className={`reveal-target-marker ${revealed ? 'show' : ''}`} style={{ left: `${state.target}%` }}>
-              <div className="marker-line target-line"></div>
-              <span className="marker-label target-label">🎯 Target</span>
-            </div>
+        <div className="reveal-stats">
+          <div className="stat-pill">
+            <span className="stat-label">Guess</span>
+            <span className="stat-val">{state.guess}%</span>
           </div>
-          <div className="spectrum-label right">{state.currentCard.right}</div>
+          <div className="stat-pill target-pill">
+            <span className="stat-label">Target</span>
+            <span className="stat-val">{state.target}%</span>
+          </div>
+          <div className="stat-pill">
+            <span className="stat-label">Difference</span>
+            <span className="stat-val">{diff}%</span>
+          </div>
         </div>
 
         <div className="clue-recall">

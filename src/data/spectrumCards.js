@@ -13,7 +13,11 @@ const spectrumCards = [
   { left: "Acceptable age gap", right: "Unacceptable age gap" },
   { left: "Acceptable party excuse", right: "Unforgivable party excuse" },
   { left: "One day without Instagram", right: "One day without WhatsApp" },
-  { left: "Worst way to spend 1 crores", right: "Best way to spend 1 crore" }
+  { left: "Worst way to spend 1 crores", right: "Best way to spend 1 crore" },
+  { left: "Great babysitter", right: "Terrible babysitter" },
+  { left: "Good pet", right: "Bad pet" },
+  { left: "Snack", right: "Meal" },
+  { left: "Normal Thing to Own", right: "Weird Thing to Own" },
 ];
 
 export default spectrumCards;
